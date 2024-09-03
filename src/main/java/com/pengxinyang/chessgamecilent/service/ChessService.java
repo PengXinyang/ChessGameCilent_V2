@@ -11,6 +11,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.AudioClip;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -22,17 +24,21 @@ import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Data
 public class ChessService {
     private ChessBoardUIController chessBoardUIController;
+    @Getter
+    @Setter
     public static ChessStats[][] points;
     public static Integer isRedTurn = 1;//黑红双方轮流下棋
     public static ChessStats selectedChessStats = null;//记录当前选中的棋子名称
     public static ArrayList<ChessStats> allChessStatss = new ArrayList<>();
     private String record;//棋谱
+    private Integer roomId = 0;
 
     public void initialize() {
         chessBoardUIController.getCheckerBoard().getChildren().removeAll();
@@ -59,7 +65,7 @@ public class ChessService {
                 ObjectMapper objectMapper = new ObjectMapper();
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(APIConfig.getApi("/game/start_chess_game")))
+                        .uri(URI.create(APIConfig.getApi("/game/start_chess_game?room_id="+roomId)))
                         .header("Content-Type", "application/json")
                         .GET().build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -84,44 +90,44 @@ public class ChessService {
     private void initPutPieces() //初始化摆放棋子
     {
         //将
-        General redShuai = new General(4, 0, 1);
-        General blackJiang = new General(4, 9, 0);
+        General redShuai = new General(4, 0, 1, roomId);
+        General blackJiang = new General(4, 9, 0, roomId);
         //马
-        Horse redMa1 = new Horse(2,1, 0, 1);
-        Horse redMa2 = new Horse(8,7, 0, 1);
-        Horse blackMa1 = new Horse(18,1, 9, 0);
-        Horse blackMa2 = new Horse(24,7, 9, 0);
+        Horse redMa1 = new Horse(2,1, 0, 1, roomId);
+        Horse redMa2 = new Horse(8,7, 0, 1, roomId);
+        Horse blackMa1 = new Horse(18,1, 9, 0, roomId);
+        Horse blackMa2 = new Horse(24,7, 9, 0, roomId);
         //象
-        Minister redMinister1 = new Minister(3,2, 0, 1);
-        Minister redMinister2 = new Minister(7,6, 0, 1);
-        Minister blackMinister1 = new Minister(19,2, 9, 0);
-        Minister blackMinister2 = new Minister(23,6, 9, 0);
+        Minister redMinister1 = new Minister(3,2, 0, 1, roomId);
+        Minister redMinister2 = new Minister(7,6, 0, 1, roomId);
+        Minister blackMinister1 = new Minister(19,2, 9, 0, roomId);
+        Minister blackMinister2 = new Minister(23,6, 9, 0, roomId);
         //炮
-        Cannon redCannon1 = new Cannon(10,1, 2, 1);
-        Cannon redCannon2 = new Cannon(11,7, 2, 1);
-        Cannon blackCannon1 = new Cannon(26,1, 7, 0);
-        Cannon blackCannon2 = new Cannon(27,7, 7, 0);
+        Cannon redCannon1 = new Cannon(10,1, 2, 1, roomId);
+        Cannon redCannon2 = new Cannon(11,7, 2, 1, roomId);
+        Cannon blackCannon1 = new Cannon(26,1, 7, 0, roomId);
+        Cannon blackCannon2 = new Cannon(27,7, 7, 0, roomId);
         //兵
-        Soldier redSoldier1 = new Soldier(12,0, 3, 1);
-        Soldier redSoldier2 = new Soldier(13,2, 3, 1);
-        Soldier redSoldier3 = new Soldier(14,4, 3, 1);
-        Soldier redSoldier4 = new Soldier(15,6, 3, 1);
-        Soldier redSoldier5 = new Soldier(16,8, 3, 1);
-        Soldier blackSoldier1 = new Soldier(28,0, 6, 0);
-        Soldier blackSoldier2 = new Soldier(29,2, 6, 0);
-        Soldier blackSoldier3 = new Soldier(30,4, 6, 0);
-        Soldier blackSoldier4 = new Soldier(31,6, 6, 0);
-        Soldier blackSoldier5 = new Soldier(32,8, 6, 0);
+        Soldier redSoldier1 = new Soldier(12,0, 3, 1, roomId);
+        Soldier redSoldier2 = new Soldier(13,2, 3, 1, roomId);
+        Soldier redSoldier3 = new Soldier(14,4, 3, 1, roomId);
+        Soldier redSoldier4 = new Soldier(15,6, 3, 1, roomId);
+        Soldier redSoldier5 = new Soldier(16,8, 3, 1, roomId);
+        Soldier blackSoldier1 = new Soldier(28,0, 6, 0, roomId);
+        Soldier blackSoldier2 = new Soldier(29,2, 6, 0, roomId);
+        Soldier blackSoldier3 = new Soldier(30,4, 6, 0, roomId);
+        Soldier blackSoldier4 = new Soldier(31,6, 6, 0, roomId);
+        Soldier blackSoldier5 = new Soldier(32,8, 6, 0, roomId);
         //车
-        Car redCar1 = new Car(1,0, 0, 1);
-        Car redCar2 = new Car(9,8, 0, 1);
-        Car blackCar1 = new Car(17,0, 9, 0);
-        Car blackCar2 = new Car(25,8, 9, 0);
+        Car redCar1 = new Car(1,0, 0, 1, roomId);
+        Car redCar2 = new Car(9,8, 0, 1, roomId);
+        Car blackCar1 = new Car(17,0, 9, 0, roomId);
+        Car blackCar2 = new Car(25,8, 9, 0, roomId);
         //士
-        Guard redGuard1 = new Guard(4,3, 0, 1);
-        Guard redGuard2 = new Guard(6,5, 0, 1);
-        Guard blackGuard1 = new Guard(20,3, 9, 0);
-        Guard blackGuard2 = new Guard(22,5, 9, 0);
+        Guard redGuard1 = new Guard(4,3, 0, 1, roomId);
+        Guard redGuard2 = new Guard(6,5, 0, 1, roomId);
+        Guard blackGuard1 = new Guard(20,3, 9, 0, roomId);
+        Guard blackGuard2 = new Guard(22,5, 9, 0, roomId);
         chessBoardUIController.getCheckerBoard().getChildren().addAll(allChessStatss);
     }
 
@@ -147,20 +153,20 @@ public class ChessService {
                 try {
                     ResponseResult responseResult = selectedChessStats.moveChess(targetX, targetY);
                     System.out.println("鼠标点击"+responseResult);
-//                    if(((String)responseResult.getData()).equals("重新移动")){
-//                        return;
-//                    }
+                    if(((Map<String,Object>)responseResult.getData()).isEmpty()){
+                        return;
+                    }
                     record = record + printRecord(startX, startY, targetX, targetY) + "\t";
                     if (isRedTurn != 1)
                         record = record + "\n";
-                    isRedTurn = 1- isRedTurn;                   //回合交替
+                    if(roomId == 0){
+                        isRedTurn = 1- isRedTurn;                   //回合交替
+                    }
                     selectedChessStats.cancelSelected();         //移动后取消选定
                     //playMusic1();
                 } catch (Exception ex) {
-                    //if()
-                    //       playMusic2();
+                           //playMusic2();
                     //selectedPiece.cancelSelected();//否则无法选中 执行完moveto后直接抛出异常cancel掉
-                    //if()
                 }
             } else {
                 //playMusic2();
@@ -318,4 +324,5 @@ public class ChessService {
     public ChessService(ChessBoardUIController chineseChessController) {
         this.chessBoardUIController = chineseChessController;
     }
+
 }

@@ -22,12 +22,22 @@ public class ChessWelcomeController {
     private Button loginButton;
     @FXML
     private ImageView imageView;
+    @FXML
+    private Button joinButton;
 
     @FXML
     private void startGame(ActionEvent event) throws IOException {
         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/pengxinyang/chessgamecilent/chess_board_ui.fxml"));
+            Parent root = loader.load();
+
+            // 获取控制器
+            ChessBoardUIController controller = loader.getController();
+
+            // 传递 roomId 参数
+            controller.setRoomId(0);
             Stage stage = (Stage) ((javafx.scene.control.Button) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/pengxinyang/chessgamecilent/chess_board_ui.fxml"))));
+            Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("象棋游戏开始");
         } catch (IOException e) {
@@ -52,7 +62,7 @@ public class ChessWelcomeController {
             if (newScene != null) {
                 // 设置按钮的背景颜色为木头棕色，字体颜色为白色
                 loginButton.setStyle(
-                        "-fx-background-color: #D2B48C;" +  // 背景颜色为木头棕色
+                        "-fx-background-color: #8B4513;" +  // 背景颜色为木头棕色
                                 "-fx-text-fill: white;" +           // 字体颜色为白色
                                 "-fx-background-radius: 10;" +      // 设置圆角
                                 "-fx-font-size: 14px;"              // 字体大小
@@ -63,6 +73,17 @@ public class ChessWelcomeController {
             if (newScene != null) {
                 // 设置按钮的背景颜色为木头棕色，字体颜色为白色
                 startButton.setStyle(
+                        "-fx-background-color: #8B4513;" +  // 背景颜色为木头棕色
+                                "-fx-text-fill: white;" +           // 字体颜色为白色
+                                "-fx-background-radius: 10;" +      // 设置圆角
+                                "-fx-font-size: 14px;"              // 字体大小
+                );
+            }
+        });
+        joinButton.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                // 设置按钮的背景颜色为木头棕色，字体颜色为白色
+                joinButton.setStyle(
                         "-fx-background-color: #D2B48C;" +  // 背景颜色为木头棕色
                                 "-fx-text-fill: white;" +           // 字体颜色为白色
                                 "-fx-background-radius: 10;" +      // 设置圆角
@@ -103,4 +124,14 @@ public class ChessWelcomeController {
     }
 
 
+    public void joinRoom(ActionEvent event) {
+        try {
+            Stage stage = (Stage) ((javafx.scene.control.Button) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/pengxinyang/chessgamecilent/room.fxml"))));
+            stage.setScene(scene);
+            stage.setTitle("房间查询");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -3,7 +3,10 @@ package com.pengxinyang.chessgamecilent.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pengxinyang.chessgamecilent.config.APIConfig;
+import com.pengxinyang.chessgamecilent.config.GameWebSocketClient;
 import com.pengxinyang.chessgamecilent.entity.ResponseResult;
+import com.pengxinyang.chessgamecilent.entity.User;
+import com.pengxinyang.chessgamecilent.entity.UserSession;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +19,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import lombok.Getter;
+import lombok.Setter;
+import org.java_websocket.enums.ReadyState;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,6 +31,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -40,6 +48,11 @@ public class LoginController {
     private Button registerButton;
     @FXML
     private AnchorPane loginAnchorPane;
+    private String token;
+
+    @Setter
+    @Getter
+    public static GameWebSocketClient gameWebSocketClient;
 
     @FXML
     public void initialize() {
@@ -91,9 +104,39 @@ public class LoginController {
                     if (responseResult.getCode() == 200) {
                         try {
                             Map<String, Object> map = objectMapper.convertValue(responseResult.getData(), new TypeReference<>() {});
+                            //System.out.println(map);
                             showAlert(Alert.AlertType.INFORMATION, "登录成功", "欢迎回来! " + map.get("user_name"));
+                            String token = (String) map.get("token");
+                            // 手动将 LinkedHashMap 转换为 User 对象
+                            LinkedHashMap userMap = (LinkedHashMap) map.get("user");
+                            User user = objectMapper.convertValue(userMap, User.class);
+                            // 保存到UserSession
+                            UserSession.getInstance().setToken(token);
+                            UserSession.getInstance().setUser(user);
+                            //System.out.println("user: "+user);
+                            gameWebSocketClient = new GameWebSocketClient(new URI("ws://localhost:9091/im"));
+                            gameWebSocketClient.connect();
+                            //连接失败会一直重连，如果不符合业务逻辑可以自行更改
+                            while (!gameWebSocketClient.getReadyState().equals(ReadyState.OPEN)) {
+                                System.out.println("连接中。。。");
+                                Thread.sleep(1000);
+                            }
+                            // 创建 JSON 对象
+                            JSONObject connection = new JSONObject();
+                            connection.put("code", 100);
+                            connection.put("content", "Bearer " + token);
+                            if(!gameWebSocketClient.isOpen()){
+                                System.out.println("连接已断开："+user);
+                            }
+                            // 发送 JSON 数据
+                            if (gameWebSocketClient.isOpen()) {
+                                gameWebSocketClient.send(connection.toString());
+                                System.out.println("发送的消息："+ connection);
+                            }
+                            System.out.println(gameWebSocketClient);
                         } catch (Exception e) {
                             showAlert(Alert.AlertType.ERROR, "登录失败", "错误发生原因: " + e.getMessage());
+                            e.printStackTrace();
                         }
                         // 关闭登录窗口
                         Stage stage = (Stage) loginButton.getScene().getWindow();

@@ -71,7 +71,7 @@ public class RegisterController {
         String username = usernameField.getText();
         String password = passwordField.getText();
         String confirmPassword = confirmPasswordField.getText();
-        System.out.println("进入注册逻辑" + username + "  " + password);
+        //System.out.println("进入注册逻辑" + username + "  " + password);
         // 构建POST请求
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("account", username);
@@ -88,10 +88,10 @@ public class RegisterController {
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson, StandardCharsets.UTF_8))
                         .build();
-                System.out.println(URI.create(APIConfig.getApi("/user/register")));
+                /*System.out.println(URI.create(APIConfig.getApi("/user/register")));
                 System.out.println(HttpRequest.BodyPublishers.ofString(requestBodyJson, StandardCharsets.UTF_8));
                 System.out.println(request);
-                System.out.println(requestBodyJson);
+                System.out.println(requestBodyJson);*/
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 ResponseResult responseResult = objectMapper.readValue(response.body(), ResponseResult.class);
 

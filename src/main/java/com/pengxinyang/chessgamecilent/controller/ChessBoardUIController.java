@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 public class ChessBoardUIController {
     private double xOffset = 0;
     private double yOffset = 0;
+    private Integer roomId = 0;
 
     static public int girdW = 81;
     static public int canvasW = 9*girdW;
@@ -70,12 +71,19 @@ public class ChessBoardUIController {
         chineseChessService.checkerBoardOnPressed(e);
     }
 
-    @FXML
-    public void initialize() {
+    public void setRoomId(Integer roomId){
+        this.roomId = roomId;
+        //System.out.println("在controller层设置roomId："+roomId);
+        chineseChessService.setRoomId(roomId);
         initView();
         initEvent();
         initService();
         setBoard();
+    }
+
+    @FXML
+    public void initialize() {
+
         //reveal();
     }
 

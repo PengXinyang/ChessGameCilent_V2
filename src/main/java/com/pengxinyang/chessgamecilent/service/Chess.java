@@ -1,12 +1,9 @@
 package com.pengxinyang.chessgamecilent.service;
 
 import com.pengxinyang.chessgamecilent.entity.ChessStats;
-import com.pengxinyang.chessgamecilent.entity.ResponseResult;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
 
@@ -14,8 +11,9 @@ import java.util.Objects;
  * 老将
  */
 class General extends ChessStats{
-    public General(int x, int y, Integer color){
-        super(5,x,y,color,"帅");
+
+    public General(int x, int y, Integer color, Integer roomId){
+        super(5,x,y,color,"帅", roomId);
         if(color != 1) {
             this.chessName = "将";
             this.cid = 21;
@@ -58,40 +56,13 @@ class General extends ChessStats{
         gameOverAlert.setContentText(winner + "方获胜");
         gameOverAlert.setGraphic(null);
         gameOverAlert.showAndWait();
+        ChessService.isRedTurn = -1;
     }
-
-//    @Override
-//    public ResponseResult moveChess(int dstX, int dstY) throws CanNotMoveToException {
-//        System.out.println("目标点x，y："+dstX+","+dstY);
-//        //移动到目标点
-//        if (Math.abs(dstX - x) + Math.abs(dstY - y) != 1)
-//            throw new CanNotMoveToException();
-//        if (dstX < 3 || dstX > 5)
-//            throw new CanNotMoveToException();
-//        if (color == 1 && dstY > 2)
-//            throw new CanNotMoveToException();
-//        if (color!=1 && dstY < 7)
-//            throw new CanNotMoveToException(); //判断能否移动，不能则抛出异常
-//        if (ChessService.points[dstX][dstY] != null) {      //目标点是否有棋子
-//            if (Objects.equals(ChessService.points[dstX][dstY].color, this.color))
-//                throw new CanNotMoveToException();
-//            ChessService.points[x][y].die();  //目标棋子死亡
-//        }
-//
-//        ChessService.points[x][y] = null;
-//        ChessService.points[dstX][dstY] = this;
-//        x = dstX;
-//        y = dstY;
-//        //目标点变成当前棋子
-//        this.setX(CheckerBoard.xToPx(dstX) - getWidth() / 2);
-//        this.setY(CheckerBoard.yToPx(dstY) - getHeight() / 2);
-//        return new ResponseResult();
-//    }
 }
 
 class Guard extends ChessStats{
-    public Guard(int cid, int x, int y, Integer color){
-        super(cid,x,y,color,"士");
+    public Guard(int cid, int x, int y, Integer color, Integer roomId){
+        super(cid,x,y,color,"士", roomId);
         if(color != 1) {
             this.chessName = "仕";
         }
@@ -123,8 +94,8 @@ class Guard extends ChessStats{
 }
 
 class Minister extends ChessStats{
-    public Minister(int cid, int x, int y, Integer color){
-        super(cid,x,y,color,"相");
+    public Minister(int cid, int x, int y, Integer color, Integer roomId){
+        super(cid,x,y,color,"相", roomId);
         if(color != 1) {
             this.chessName = "象";
         }
@@ -155,8 +126,8 @@ class Minister extends ChessStats{
 }
 
 class Horse extends ChessStats{
-    public Horse(int cid, int x, int y, Integer color){
-        super(cid,x,y,color,"马");
+    public Horse(int cid, int x, int y, Integer color, Integer roomId){
+        super(cid,x,y,color,"马", roomId);
         if(color != 1) {
             this.chessName = "馬";
         }
@@ -187,8 +158,8 @@ class Horse extends ChessStats{
 }
 
 class Car extends ChessStats{
-    public Car(int cid, int x, int y, Integer color){
-        super(cid,x,y,color,"车");
+    public Car(int cid, int x, int y, Integer color, Integer roomId){
+        super(cid,x,y,color,"车", roomId);
         if(color != 1) {
             this.chessName = "車";
         }
@@ -219,8 +190,8 @@ class Car extends ChessStats{
 }
 
 class Soldier extends ChessStats{
-    public Soldier(int cid, int x, int y, Integer color){
-        super(cid,x,y,color,"兵");
+    public Soldier(int cid, int x, int y, Integer color,Integer roomId){
+        super(cid,x,y,color,"兵", roomId);
         if(color != 1) {
             this.chessName = "卒";
         }
@@ -251,8 +222,8 @@ class Soldier extends ChessStats{
 }
 
 class Cannon extends ChessStats{
-    public Cannon(int cid, int x, int y, Integer color){
-        super(cid,x,y,color,"炮");
+    public Cannon(int cid, int x, int y, Integer color, Integer roomId){
+        super(cid,x,y,color,"炮", roomId);
         if(color != 1) {
             this.chessName = "砲";
         }
